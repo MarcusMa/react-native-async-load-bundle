@@ -7,7 +7,7 @@
 
 const baseMetroConfig = require('./metro.config.base.js');
 const buildConfig = {
-  type: baseMetroConfig.BuildType.DEFAULT,
+  type: baseMetroConfig.BuildType.DIFF,
 };
 module.exports = {
   transformer: {

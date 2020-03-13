@@ -3,6 +3,10 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
+    "build_android_common_bundle": "./__async_load_shell__/build_android_common_bundle.sh",
+    "build_android_index_bundle": "./__async_load_shell__/build_android_index_bundle.sh",
+    "build_android_index_diff_bundle": "./__async_load_shell__/build_android_index_diff_bundle.sh",
+    "copy_files_to_projects": "./__async_load_shell__/copy_files_to_projects.sh",
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "start": "react-native start",
