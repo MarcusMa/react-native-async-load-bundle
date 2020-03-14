@@ -4,15 +4,15 @@
  *
  * @format
  */
-const fs = require('fs');
-const crypto = require('crypto');
-const defaultCreateModuleIdFactory = require('./node_modules/metro/src/lib/createModuleIdFactory');
+const fs = require("fs");
+const crypto = require("crypto");
+const defaultCreateModuleIdFactory = require("./node_modules/metro/src/lib/createModuleIdFactory");
 
-const BUILD_TYPE_COMMOM = 'common';
-const BUILD_TYPE_DEFAULT = 'default';
-const BUILD_TYPE_DIFF = 'diff';
+const BUILD_TYPE_COMMOM = "common";
+const BUILD_TYPE_DEFAULT = "default";
+const BUILD_TYPE_DIFF = "diff";
 
-const moduleIdsMapFilePath = './repo_for_module_id.json';
+const moduleIdsMapFilePath = "./repo_for_module_id.json";
 
 /**
  *
@@ -21,7 +21,7 @@ const moduleIdsMapFilePath = './repo_for_module_id.json';
 function getOrCreateModuleIdsJsonObj(filepath) {
   if (fs.existsSync(filepath)) {
     console.log(`init map from file : ${filepath}`);
-    let data = fs.readFileSync(filepath, 'utf-8');
+    let data = fs.readFileSync(filepath, "utf-8");
     return JSON.parse(data);
   } else {
     return {};
@@ -44,9 +44,9 @@ function saveModuleIdsJsonObj(filepath, jsonObj) {
  * @param {get} path
  */
 function getFindKey(path) {
-  let md5 = crypto.createHash('md5');
+  let md5 = crypto.createHash("md5");
   md5.update(path);
-  let findKey = md5.digest('hex');
+  let findKey = md5.digest("hex");
   return findKey;
 }
 
@@ -61,13 +61,17 @@ buildCreateModuleIdFactoryWithLocalStorage = function(buildConfig) {
     // Please. See node_modules / metro / src / lib / createModuleIdFactory.js
     return defaultCreateModuleIdFactory;
   } else {
-    var currentModuleId = 0;
+    let currentModuleId = 0;
+    // init moduleIdsJsonObj from file;
     moduleIdsJsonObj = getOrCreateModuleIdsJsonObj(moduleIdsMapFilePath);
+    // init currentModuleId;
     for (var key in moduleIdsJsonObj) {
-      currentModuleId > moduleIdsJsonObj[key].id
-        ? currentModuleId
-        : moduleIdsJsonObj[key].id;
+      currentModuleId =
+        currentModuleId > moduleIdsJsonObj[key].id
+          ? currentModuleId
+          : moduleIdsJsonObj[key].id;
     }
+    console.log("currentModuleId = " + currentModuleId);
     return () => {
       return path => {
         // console.log(`buildType: ${buildType}`);
@@ -75,12 +79,12 @@ buildCreateModuleIdFactoryWithLocalStorage = function(buildConfig) {
         if (moduleIdsJsonObj[findKey] == null) {
           moduleIdsJsonObj[findKey] = {
             id: ++currentModuleId,
-            type: buildConfig.type,
+            type: buildConfig.type
           };
           saveModuleIdsJsonObj(moduleIdsMapFilePath, moduleIdsJsonObj);
         }
         let id = moduleIdsJsonObj[findKey].id;
-        console.log(`createModuleIdFactory id = ${id} for ${path}`);
+        // console.log(`createModuleIdFactory id = ${id} for ${path}`);
         return id;
       };
     };
@@ -105,8 +109,8 @@ module.exports = {
   BuildType: {
     COMMON: BUILD_TYPE_COMMOM,
     DEFAULT: BUILD_TYPE_DEFAULT,
-    DIFF: BUILD_TYPE_DIFF,
+    DIFF: BUILD_TYPE_DIFF
   },
   buildCreateModuleIdFactory: buildCreateModuleIdFactoryWithLocalStorage,
-  buildProcessModuleFilter: buildProcessModuleFilter,
+  buildProcessModuleFilter: buildProcessModuleFilter
 };
