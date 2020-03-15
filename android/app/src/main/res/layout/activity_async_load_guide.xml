@@ -16,8 +16,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:textSize="18sp"
-        android:text="This activity loads a common bundle file in the backgroud, it is used to simulate a PARENT activity of the activity using react native. This activity can usually
-be dislayed the entrance of your business which was builded by react native in your official app. You can start the activity using react native by clicking the button blew."
+        android:text="@string/msg_async_guide"
         app:layout_constraintBottom_toTopOf="@+id/btn_async_start"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
