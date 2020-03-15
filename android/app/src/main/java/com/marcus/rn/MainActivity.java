@@ -16,6 +16,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         findViewById(R.id.btn_sync).setOnClickListener(v -> {
             MainApplication.isSyncLoadMode = true;
             TimeRecordUtil.setStartTime(Constants.TAG_REACT_CONTENT_LOAD);

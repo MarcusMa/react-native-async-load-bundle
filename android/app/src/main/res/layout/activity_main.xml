@@ -15,7 +15,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:text="In this demo, we ..."
+        android:text="There are two ways to start an activity with react naitve in the demo: one as SYNC, the other as ASYNC. It is same with the offical reference implementation when using SYNC. As for ASYNC, it will start a general activity,which will load a common bundle file, after that it will start a custom activity, which will only load the differential bundle file. The load time of react view will display by log and toast."
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/t2"
         app:layout_constraintEnd_toEndOf="parent"
@@ -30,7 +30,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:text="Notice:........."
+        android:text="NOTICE: If you want to get the load time accurately, you should restart the app before clicking one of the bottom two buttons."
         android:textColor="#F44336"
         app:layout_constraintBottom_toTopOf="@+id/btn_sync"
         app:layout_constraintEnd_toEndOf="parent"
@@ -60,10 +60,21 @@
         android:layout_marginLeft="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
         android:text="Async Load RN Bundle"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/textView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_sync" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Powered by Marcus"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
