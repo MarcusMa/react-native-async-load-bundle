@@ -1,14 +1,14 @@
 # React Native Async Load Bundle
 
-This is an example project to build the common bundle file and the differential bundle file using metro, and load the differential bundle asynchronously in app. Compare with loading the official bundle file synchronously, there was 30% ~ 50% decrease in the load time of react view by using loading the differential bundle asynchronously.
+This is an example project to build the common bundle file and the differential bundle file using metro, and load the differential bundle asynchronously in app. Compare with loading the official bundle file synchronously, there was **30% ~ 50%** decrease in the load time of react view by using loading the differential bundle asynchronously.
 
 ## 📋 Contents
 
 - [Background](#-background)
 - [Usage](#-usage)
 - [Experimental Data](#-experimental-data)
-- [How dotes it work](#-how-dotes-it-work)
-- [Contributing](#-how-to-contribute)
+- [How does it work](#-how-does-it-work)
+- [Contributing](#-contributing)
 - [License](#-license)
 
 ## 📋 Background
@@ -69,7 +69,7 @@ Note: The `license` badge image link at the top of this file should be updated w
 
 ### 2. Compare the load time of react view.
 
-## 📋 How dotes it work
+## 📋 How does it work
 
 ### 1. Build a differential bundle file using metro.
 
@@ -79,36 +79,31 @@ By customizing `createModuleIdFactory(path)`, we used the **hashcode** of the fi
 
 ```javascript
 // See more code int metro.config.base.js
-// ... other code ...
+// ...
 function getFindKey(path) {
   let md5 = crypto.createHash("md5");
   md5.update(path);
   let findKey = md5.digest("hex");
   return findKey;
 }
-// ... other code ...
+// ...
 ```
 
 In order to avoid duplication of allocation of module id, we use a local file (`repo_for_module_id.json`) to store the result of allocation during the process of buliding.
 
 ```json
-// ... other data ...
-"8b055b854fd2345d343b6618c9b71f7e": {
+"8b055b854fd2345d343b6618c9b71f7e":
+{
     "id": 5,
-    "type": "common"    // it means the module is included in common bundle file
-    },
-"51a407ce4b86f3682b6d252065073d57": {
-    "id": 6,
     "type": "common"
-    },
-// ... other data ...
+}
 ```
 
 By customizing `processModuleFilter(module)`, we compare the hashcode of input `module` with localstorage. If input `module` is included by common bundle file, it will be filtered and will not be writeen to the output bundle file.
 
 ```javascript
 // See more code int metro.config.base.js
-// ... other code ...
+// ...
 buildProcessModuleFilter = function(buildConfig) {
   return moduleObj => {
     if (buildConfig.type == BUILD_TYPE_DIFF) {
@@ -122,10 +117,12 @@ buildProcessModuleFilter = function(buildConfig) {
     return true;
   };
 };
-// ... other code ...
+// ...
 ```
 
-However, the pollyfills is also writeen in the output bundle file after running metro. We should remove those code by ourselives. For example, we made a script file call `removePollyfill.js` in the dir `__asyc_load_shell__`, you can use it by run:
+However, the pollyfills is also writeen in the output bundle file after running metro. We should remove those code by ourselives.
+
+For example, we made a script file call `removePollyfill.js` in the dir `__asyc_load_shell__`, you can use it by run:
 
 ```javascript
 node ./__async_load_shell__/removePolyfill.js  {your_different_bundle_file_path}
@@ -133,16 +130,19 @@ node ./__async_load_shell__/removePolyfill.js  {your_different_bundle_file_path}
 
 ### 2. Load the differential bundle file asynchronously in android.
 
-Beacause the common bundle file includes all basic codes, we should make sure a good timing to load the common bundle file before loading the differential bundle file. In the demo app, we build a guide activity to load the common bundle file, this activity is also used to simulate a PARENT activity of the activity using react native, this activity can usually
-be dislayed the entrance of your business which was builded by react native in your official app.
+Beacause the common bundle file includes all basic codes, we should make sure a good timing to load the common bundle file before loading the differential bundle file.
 
-All related code was organized in package `com.marcus.rn.async`. There are some key points about implementation:
+In the demo app, we build a guide activity to load the common bundle file, this activity is also used to simulate a **PARENT** activity of the activity using react native.
 
-1. We use the `ReactNativeHost` to point the path of common bundle file, and call `getReactNativeHost().getReactInstanceManager().createReactContextInBackground();` to initialize the context of React Native and load the common bundle file.
-2. In order to get approximate finish time of loading common bundle file, we use `ReactMarker.addListener()` to add custom listener, and monitor the event called `ReactMarkerConstants.NATIVE_MODULE_INITIALIZE_END` to indicate the finish of common bundle file.
+This guide activity can also usually be dislayed the entrance of your business which was builded by react native in your official app.
+
+All related code was organized in package `com.marcus.rn.async`. There are some key points about the implementation:
+
+1. We use the `ReactNativeHost` to point the path of common bundle file, and call `createReactContextInBackground()` to initialize the context of React Native and load the common bundle file.
+2. In order to get approximate finish time of loading common bundle file, we use `ReactMarker.addListener()` to add custom listener and monitor the event called `NATIVE_MODULE_INITIALIZE_END` to indicate the finish of loading common bundle file.
 3. We redefine `ReactActivityDelegate` class to suit the secen of loading asynchronously. which can be found by name with `AsyncLoadActivityDelegate.java`.
-4. Because the guide activty and the container activity of react native are shared the same `AsyncLoadActivityDelegate` object, we build a **singleton** class called `AsyncLoadActivityDelegateProvider` to provider the object.
-5. The **load time** of react view will be displayed by log and toast. it records time period from clicking entry button to monitoring the event called `ReactMarkerConstants.CONTENT_APPEARED`.
+4. Becasue the guide activty and the container activity of react native **MUST** shared the same `AsyncLoadActivityDelegate` object, we build a **singleton** class called `AsyncLoadActivityDelegateProvider` to provider the object.
+5. The **load time of react view** will be displayed by log and toast, which records time period from clicking entry button to monitor the event called `CONTENT_APPEARED`.
 
 ### 3. Load the differential bundle file asynchronously in iOS.
 
@@ -156,4 +156,4 @@ Small note: If editing the Readme, please conform to the [standard-readme](https
 
 ## 📋 License
 
-[MIT © Richard McRichface.](../LICENSE)
+[MIT © Marcus Ma.](../LICENSE)
