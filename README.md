@@ -21,12 +21,9 @@ However, there is a new way to build the differential bundle file by using metro
 
 ## 📋 Usage
 
-1. Modify the `common.js`
+1. Modify the `common.js` like blew:
 
 ```javascript
-/**
- * Example of common.js
- */
 require("react-native");
 require("react");
 // Add other libs you want to add to the common bundle like this:
@@ -35,23 +32,33 @@ require("react");
 
 2. Build the common bundle file with `--config metro.config.common.js` or use the command blew:
 
+For android:
+
 ```shell
-# for android:
 npm run build_android_common_bundle
-# for ios:
+```
+
+For iOS:
+
+```shell
 npm run build_ios_common_bundle
 ```
 
-3. Build the differential bundle file with `--config metro.config.diff.js` or use the command blew:
+1. Build the differential bundle file with `--config metro.config.diff.js` or use the command blew:
+
+For android:
 
 ```shell
-# for android:
 npm run build_android_index_diff_bundle
-# for ios:
+```
+
+For iOS:
+
+```shell
 npm run build_ios_index_diff_bundle
 ```
 
-4. Copy all output files to the dir of app project or use the command blew:
+1. Copy all output files to the dir of app project or use the command blew:
 
 ```shell
 npm run copy_files_to_projects
