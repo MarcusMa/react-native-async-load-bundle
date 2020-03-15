@@ -1,6 +1,6 @@
 # React Native Async Load Bundle
 
-This is an example project to build the common bundle file and the differential bundle file using metro, and load the differential bundle asynchronously in app. Compare with loading the official bundle file synchronously, there was **30% ~ 50%** decrease in the load time of react view by using loading the differential bundle asynchronously.
+This is an example project to build the common bundle file and the differential bundle file using metro, and load the differential bundle asynchronously in app. Compare with loading the official bundle file synchronously, there was **30% ~ 50%**(200 ~ 300 ms) decrease in the load time of react view by using loading the differential bundle asynchronously.
 
 ## 📋 Contents
 
