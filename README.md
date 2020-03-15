@@ -153,9 +153,7 @@ node ./__async_load_shell__/removePolyfill.js  {your_different_bundle_file_path}
 
 Beacause the common bundle file includes all basic codes, we should make sure a good timing to load the common bundle file before loading the differential bundle file.
 
-In the demo app, we build a guide activity to load the common bundle file, this activity is also used to simulate a **PARENT** activity of the activity using react native.
-
-This guide activity can also usually be dislayed the entrance of your business which was builded by react native in your official app.
+In the demo app, we build a guide activity to load the common bundle file, this activity is also used to simulate a **PARENT** activity of the activity using react native. This guide activity can also usually be dislayed the entrance of your business which was builded by react native in your official app.
 
 All related code was organized in package `com.marcus.rn.async`. There are some key points about the implementation:
 
@@ -169,12 +167,8 @@ All related code was organized in package `com.marcus.rn.async`. There are some 
 
 ## 📋 Contributing
 
-See [the contributing file](CONTRIBUTING.md)!
-
 PRs accepted.
-
-Small note: If editing the Readme, please conform to the [standard-readme](https://github.com/RichardLitt/standard-readme) specification.
 
 ## 📋 License
 
-[MIT © Marcus Ma.](../LICENSE)
+[MIT © Marcus Ma.](./LICENSE)
