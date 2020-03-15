@@ -6,8 +6,8 @@ This is an example project to build the common bundle file and the differential 
 
 - [Background](#-background)
 - [Usage](#-usage)
-- [Experimental Data](#-experimental-data)
-- [How does it work](#-how-does-it-work)
+- [Experimental data](#-experimental-data)
+- [How it works](#-how-it-works)
 - [Contributing](#-contributing)
 - [License](#-license)
 
@@ -58,9 +58,7 @@ npm run copy_files_to_projects
 
 > NOTICE: There are two ways to start an activity with react naitve in android app: one as sync, the other as async. It is same with the offical reference implementation when using sync. As for async, it will start a general activity, which will load a common bundle file, after that it will start a custom activity using react native, which will only load the differential bundle file. The load time of react view will display by log and toast. If you want to get the load time accurately, you should restart the app before clicking one of the bottom two buttons.
 
-Note: The `license` badge image link at the top of this file should be updated with the correct `:user` and `:repo`.
-
-## 📋 Experimental Data
+## 📋 Experimental data
 
 ### 1. Compare the size of output file
 
@@ -80,7 +78,7 @@ Note: The `license` badge image link at the top of this file should be updated w
 | diff.ios.bundle (Using bsdiff)                  | **3.9 K** |      3.9 K      |
 | diff.ios.bundle (Using google-diff-match-patch) |  11.0 K   |      3.0 K      |
 
-> You can find more information about `google-diff-match-patch` and `BSDiff` by visiting ....
+> You can find more information about `google-diff-match-patch` and `BSDiff` by visiting [this](https://github.com/MarcusMa/compare-file-diff-tools).
 
 ### 2. Compare the load time of react view.
 
@@ -90,7 +88,7 @@ Note: The `license` badge image link at the top of this file should be updated w
 | Asynchronization |  1148.2 ms  |  514.8 ms   |  564.2 ms   |   196.3 ms    |
 |                  | **-29.50%** | **-30.30%** | **-41.60%** |  **-58.43%**  |
 
-## 📋 How does it work
+## 📋 How it works
 
 ### 1. Build a differential bundle file using metro.
 
