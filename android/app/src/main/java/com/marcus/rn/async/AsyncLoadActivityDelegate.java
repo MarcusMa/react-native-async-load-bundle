@@ -86,13 +86,6 @@ public class AsyncLoadActivityDelegate {
 
     protected void onCreateInGuideActivity(Bundle savedInstanceState) {
         final ReactInstanceManager manager = getReactNativeHost().getReactInstanceManager();
-        manager.addReactInstanceEventListener(new ReactInstanceManager.ReactInstanceEventListener() {
-            @Override
-            public void onReactContextInitialized(ReactContext context) {
-                Log.d(Constants.TAG_LOG, "Common Bundle Load finished.");
-                manager.removeReactInstanceEventListener(this);
-            }
-        });
         getReactNativeHost().getReactInstanceManager().createReactContextInBackground();
     }
 

@@ -15,7 +15,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:text="There are two ways to start an activity with react naitve in the demo: one as SYNC, the other as ASYNC. It is same with the offical reference implementation when using SYNC. As for ASYNC, it will start a general activity,which will load a common bundle file, after that it will start a custom activity, which will only load the differential bundle file. The load time of react view will display by log and toast."
+        android:text="There are two ways to start an activity with react naitve in the demo: one as SYNC, the other as ASYNC. It is same with the offical reference implementation when using SYNC. As for ASYNC, it will start a general activity, which will load a common bundle file, after that it will start a custom activity, which will only load the differential bundle file. The load time of react view will display by log and toast."
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/t2"
         app:layout_constraintEnd_toEndOf="parent"
