@@ -15,7 +15,7 @@ This is an example project to build the common bundle file and the differential 
 
 As we all known that there are three parts in a offical bundle file: **Ployfill**、 **Modules**、 **Require**. If you build two different offical bundle files, you will find that there are many repeated content, which is close to 500K. In order to minimize the bundle file, we define a **common bundle file**, which only includes some basic modules(such as `react` and `react-native`). And we define a **differential bundle file**, which only includes your custom code.
 
-Before React Native 0.55, we generally use `google-diff-match-tool` or `BSDiff` to build the differential bundle file, which needs the process of merging before your app loading the differential bundle file.
+Before React Native 0.55, we generally use `google-diff-match-patch` or `BSDiff` to build the differential bundle file, which needs the process of merging before your app loading the differential bundle file.
 
 However, there is a new way to build the differential bundle file by using metro.
 
@@ -32,33 +32,23 @@ require("react");
 
 2. Build the common bundle file with `--config metro.config.common.js` or use the command blew:
 
-For android:
-
 ```shell
+# For android:
 npm run build_android_common_bundle
-```
-
-For iOS:
-
-```shell
+# For iOS:
 npm run build_ios_common_bundle
 ```
 
-1. Build the differential bundle file with `--config metro.config.diff.js` or use the command blew:
-
-For android:
+3. Build the differential bundle file with `--config metro.config.diff.js` or use the command blew:
 
 ```shell
+# For android:
 npm run build_android_index_diff_bundle
-```
-
-For iOS:
-
-```shell
+# For iOS:
 npm run build_ios_index_diff_bundle
 ```
 
-1. Copy all output files to the dir of app project or use the command blew:
+4. Copy all output files to the dir of app project or use the command blew:
 
 ```shell
 npm run copy_files_to_projects
@@ -66,7 +56,7 @@ npm run copy_files_to_projects
 
 5. Run the app project by Android Studio or XCode.
 
-> There are two ways to start an activity with react naitve in android app: one as sync, the other as async. It is same with the offical reference implementation when using sync. As for async, it will start a general activity, which will load a common bundle file, after that it will start a custom activity using react native, which will only load the differential bundle file. The load time of react view will display by log and toast. If you want to get the load time accurately, you should restart the app before clicking one of the bottom two buttons.
+> NOTICE: There are two ways to start an activity with react naitve in android app: one as sync, the other as async. It is same with the offical reference implementation when using sync. As for async, it will start a general activity, which will load a common bundle file, after that it will start a custom activity using react native, which will only load the differential bundle file. The load time of react view will display by log and toast. If you want to get the load time accurately, you should restart the app before clicking one of the bottom two buttons.
 
 Note: The `license` badge image link at the top of this file should be updated with the correct `:user` and `:repo`.
 
@@ -74,7 +64,31 @@ Note: The `license` badge image link at the top of this file should be updated w
 
 ### 1. Compare the size of output file
 
+| Android File                                        |   Size    | Size After gzip |
+| --------------------------------------------------- | :-------: | :-------------: |
+| common.android.bundle                               |  637.0 K  |      175K       |
+| index.android.bundle (Original)                     |  645.0 K  |      177K       |
+| diff.android.bundle (Using metro)                   |   8.3 K   |    **2.5 K**    |
+| diff.android.bundle (Using bsdiff)                  | **3.9 K** |      3.9 K      |
+| diff.android.bundle (Using google-diff-match-patch) |  11.0 K   |      3.0 K      |
+
+| iOS File                                        |   Size    | Size After gzip |
+| ----------------------------------------------- | :-------: | :-------------: |
+| common.ios.bundle                               |  629.0 K  |      173K       |
+| index.ios.bundle (Original)                     |  637.0 K  |      176K       |
+| diff.ios.bundle (Using metro)                   |   8.3 K   |    **2.5 K**    |
+| diff.ios.bundle (Using bsdiff)                  | **3.9 K** |      3.9 K      |
+| diff.ios.bundle (Using google-diff-match-patch) |  11.0 K   |      3.0 K      |
+
+> You can find more information about `google-diff-match-patch` and `BSDiff` by visiting ....
+
 ### 2. Compare the load time of react view.
+
+| Loading Type     |   Redmi 3   | Huawei P20  |  iPhone 6s  | iPhone XS MAX |
+| ---------------- | :---------: | :---------: | :---------: | :-----------: |
+| Synchronization  |  1628.0 ms  |  738.8 ms   |  961.3 ms   |   472.2 ms    |
+| Asynchronization |  1148.2 ms  |  514.8 ms   |  564.2 ms   |   196.3 ms    |
+|                  | **-29.50%** | **-30.30%** | **-41.60%** |  **-58.43%**  |
 
 ## 📋 How does it work
 
@@ -131,7 +145,7 @@ However, the pollyfills is also writeen in the output bundle file after running 
 
 For example, we made a script file call `removePollyfill.js` in the dir `__asyc_load_shell__`, you can use it by run:
 
-```javascript
+```shell
 node ./__async_load_shell__/removePolyfill.js  {your_different_bundle_file_path}
 ```
 
