@@ -93,8 +93,12 @@ buildCreateModuleIdFactoryWithLocalStorage = function(buildConfig) {
 
 buildProcessModuleFilter = function(buildConfig) {
   return moduleObj => {
+    let path = moduleObj.path;
+    if (!fs.existsSync(path)) {
+      return true;
+    }
     if (buildConfig.type == BUILD_TYPE_DIFF) {
-      let findKey = getFindKey(moduleObj.path);
+      let findKey = getFindKey(path);
       let storeObj = moduleIdsJsonObj[findKey];
       if (storeObj != null && storeObj.type == BUILD_TYPE_COMMOM) {
         return false;
