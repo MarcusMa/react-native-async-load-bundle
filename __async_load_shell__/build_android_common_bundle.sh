@@ -1,2 +1,0 @@
-react-native bundle --platform android --dev false --entry-file common.js --bundle-output __async_load_output__/common.android.bundle --assets-dest __async_load_output__/common/android --config ./metro.config.common.js
-    
