@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">RN异步加载</string>
+    <string name="msg_main">这个Demo提供两种启动RN页面的方式：同步加载和异步加载。同步加载就是使用官方的实现方式加载和显示RN页面。然而异步加载则是首先启动一个一般的Activity，并在这个Activity初始化RN环境并后台加载Common文件, 之后通过点击按钮启动RN容器的Activity，在这个容器Activity中加载Diff文件。RN页面的加载时间将通过控制台日志和Toast方式显示。</string>
+    <string name="msg_main_tip">注意: 如果你想准确对比同步和异步的加载时间，在点击下面任意一个按钮前必须对App进行重新启动。</string>
+    <string name="title_btn_sync">同步加载(官方实现)</string>
+    <string name="title_btn_async">异步加载</string>
+    <string name="msg_async_guide">这个Activity将在后台初始化RN环境并加载Common文件。这个Activity是用来作为RN容器Activity的父Activity的。在生产环境中，这个页面通常用来显示那些用RN构建的业务的入口信息的。 通过点击下面的按钮可以启动RN容器Activity。</string>
+</resources>
