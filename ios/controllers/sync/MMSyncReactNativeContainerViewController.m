@@ -6,16 +6,13 @@
 //  Copyright © 2020 Facebook. All rights reserved.
 //
 
-#import "MMSyncReactNativeViewController.h"
-#import <React/RCTBridge.h>
-#import <React/RCTBundleURLProvider.h>
-#import <React/RCTRootView.h>
+#import "MMSyncReactNativeContainerViewController.h"
 
-@interface MMSyncReactNativeViewController ()
+@interface MMSyncReactNativeContainerViewController ()
 
 @end
 
-@implementation MMSyncReactNativeViewController
+@implementation MMSyncReactNativeContainerViewController
 
 - (void)viewDidLoad {
   [super viewDidLoad];
@@ -25,15 +22,10 @@
 }
 
 - (void) initReactNativeContext{
-  [[NSNotificationCenter defaultCenter] addObserver:self
-                                            selector:@selector(handleBridgeDidLoadJavaScriptNotification:)
-                                                name:RCTContentDidAppearNotification
-                                              object:nil];
-  
   
   NSDictionary *launchOptions = [[NSDictionary alloc] init];
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self
-                                        launchOptions:launchOptions];
+                                            launchOptions:launchOptions];
   
   RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
                                                    moduleName:@"RNAsyncLoader"
@@ -42,17 +34,11 @@
   self.view = rootView;
 }
 
-- (void)handleBridgeDidLoadJavaScriptNotification:(NSNotification *)notification
-{
-   // todo
-}
-
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
 {
   return [[NSBundle mainBundle] URLForResource:@"bundle/index.ios"
                                  withExtension:@"bundle"];
 }
-
 
 /*
  #pragma mark - Navigation

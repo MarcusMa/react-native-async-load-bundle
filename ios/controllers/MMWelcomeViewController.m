@@ -7,8 +7,10 @@
 //
 
 #import "MMWelcomeViewController.h"
-#import "MMSyncReactNativeViewController.h"
+#import "MMSyncReactNativeContainerViewController.h"
+#import "MMAsyncGuideViewController.h"
 #import "Masonry.h"
+#import "MMTimeRecordUtil.h"
 
 @interface MMWelcomeViewController ()
 
@@ -76,10 +78,9 @@
   [btnAsync setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
   [btnAsync setBackgroundColor:[UIColor lightGrayColor]];
   [btnAsync setTag: 2];
-  [btnSync addTarget:self
+  [btnAsync addTarget:self
               action:@selector(btnClickListener:)
     forControlEvents:UIControlEventTouchUpInside];
-  [self.view addSubview:btnSync];
   [self.view addSubview:btnAsync];
   
   [btnAsync mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -96,11 +97,14 @@
   if(button.tag == 1){
     // sync Button
     NSLog(@"Sync Button Clicked.");
-    MMSyncReactNativeViewController *controller = [[MMSyncReactNativeViewController alloc] init];
+    MMSyncReactNativeContainerViewController *controller = [[MMSyncReactNativeContainerViewController alloc] init];
     [self.navigationController pushViewController:controller animated:NO];
+    [[MMTimeRecordUtil getInstance] setStartTime:@"ViewAction"];
   }else if(button.tag == 2){
     // async Button
     NSLog(@"Async Button Clicked.");
+    MMAsyncGuideViewController *controller = [[MMAsyncGuideViewController alloc] init];
+    [self.navigationController pushViewController:controller animated:NO];
   }else {
     
   }

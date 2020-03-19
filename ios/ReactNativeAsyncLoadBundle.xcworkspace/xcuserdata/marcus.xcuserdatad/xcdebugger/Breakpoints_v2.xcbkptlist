@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bucket
+   uuid = "2631656C-A561-4B31-B7DD-C405D3DA0B1D"
+   type = "0"
+   version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "F47C460A-E149-41B4-BE41-AA6A6F39CAE2"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "controllers/async/MMAsyncLoadManager.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "45"
+            endingLineNumber = "45"
+            landmarkName = "-buildRootViewWithDiffBundleName:withExtension:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "E59F5D7E-F928-4F2C-BD81-B94F7867090E"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "controllers/async/MMAsyncLoadManager.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "46"
+            endingLineNumber = "46"
+            landmarkName = "-buildRootViewWithDiffBundleName:withExtension:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "A585031C-3122-4E98-A7B9-7133600D5F72"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../node_modules/react-native/React/CxxBridge/RCTCxxBridge.mm"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "911"
+            endingLineNumber = "911"
+            landmarkName = "-executeSourceCode:sync:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "6C82D44E-65F6-432C-A059-D14FA2E3516F"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../node_modules/react-native/React/CxxBridge/RCTCxxBridge.mm"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1297"
+            endingLineNumber = "1297"
+            landmarkName = "-enqueueApplicationScript:url:onComplete:"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "6C82D44E-65F6-432C-A059-D14FA2E3516F - 22d9cee8a6398edc"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[RCTCxxBridge enqueueApplicationScript:url:onComplete:]"
+                  moduleName = "ReactNativeAsyncLoadBundle"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/marcus/workspace/github/react-native-async-load-bundle/node_modules/react-native/React/CxxBridge/RCTCxxBridge.mm"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1297"
+                  endingLineNumber = "1297"
+                  offsetFromSymbolStart = "144">
+               </Location>
+               <Location
+                  uuid = "6C82D44E-65F6-432C-A059-D14FA2E3516F - 22d9cee8a6398edc"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[RCTCxxBridge enqueueApplicationScript:url:onComplete:]"
+                  moduleName = "ReactNativeAsyncLoadBundle"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/marcus/workspace/github/react-native-async-load-bundle/node_modules/react-native/React/CxxBridge/RCTCxxBridge.mm"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1297"
+                  endingLineNumber = "1297"
+                  offsetFromSymbolStart = "168">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
+</Bucket>
