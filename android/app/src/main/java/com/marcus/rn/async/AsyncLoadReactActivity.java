@@ -4,18 +4,35 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
+import com.facebook.react.bridge.ReactMarker;
+import com.facebook.react.bridge.ReactMarkerConstants;
 import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler;
 import com.facebook.react.modules.core.PermissionAwareActivity;
 import com.facebook.react.modules.core.PermissionListener;
+import com.marcus.rn.Constants;
+import com.marcus.rn.utils.TimeRecordUtil;
 
 public abstract class AsyncLoadReactActivity extends AppCompatActivity
         implements DefaultHardwareBackBtnHandler, PermissionAwareActivity {
 
     private final AsyncLoadActivityDelegate mDelegate;
+
+    private ReactMarker.MarkerListener markerListener = new ReactMarker.MarkerListener() {
+        @Override
+        public void logMarker(ReactMarkerConstants name, @Nullable String tag, int instanceKey) {
+            if (name == ReactMarkerConstants.CONTENT_APPEARED) {
+                TimeRecordUtil.setEndTime(Constants.TAG_VIEW_ACTION);
+                TimeRecordUtil.setEndTime(Constants.TAG_REACT_CONTENT_LOAD);
+                TimeRecordUtil.printTimeInfo(Constants.TAG_VIEW_ACTION);
+                TimeRecordUtil.printTimeInfo(Constants.TAG_REACT_CONTENT_LOAD);
+            }
+        }
+    };
 
     protected AsyncLoadReactActivity() {
         mDelegate = createReactActivityDelegate();
@@ -33,13 +50,15 @@ public abstract class AsyncLoadReactActivity extends AppCompatActivity
      * Called at construction time, override if you have a custom delegate implementation.
      */
     protected AsyncLoadActivityDelegate createReactActivityDelegate() {
-        return AsyncLoadActivityDelegateProvider.getInstance().getDelegate(this);
+        return AsyncLoadManager.getInstance().getAvailableDelegate();
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mDelegate.onCreateInContainerReactActivity(this, savedInstanceState);
+        TimeRecordUtil.setStartTime(Constants.TAG_REACT_CONTENT_LOAD);
+        ReactMarker.addListener(markerListener);
+        mDelegate.onCreate(this, savedInstanceState);
     }
 
     @Override
@@ -56,6 +75,7 @@ public abstract class AsyncLoadReactActivity extends AppCompatActivity
 
     @Override
     protected void onDestroy() {
+        ReactMarker.removeListener(markerListener);
         super.onDestroy();
         mDelegate.onDestroy();
     }

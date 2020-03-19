@@ -17,12 +17,15 @@ public class AsyncLoadGuideActivity extends AppCompatActivity {
         setContentView(R.layout.activity_async_load_guide);
 
         findViewById(R.id.btn_async_start).setOnClickListener(v -> {
-            TimeRecordUtil.setStartTime(Constants.TAG_REACT_CONTENT_LOAD);
+            TimeRecordUtil.setStartTime(Constants.TAG_VIEW_ACTION);
             Intent intent = new Intent(this, AsyncLoadContainerReactActivity.class);
             startActivity(intent);
         });
+    }
 
-        AsyncLoadActivityDelegateProvider.getInstance().getDelegate(this)
-                .onCreateInGuideActivity(savedInstanceState);
+    @Override
+    protected void onStart() {
+        super.onStart();
+        AsyncLoadManager.getInstance().prepareReactNativeEnv(this);
     }
 }

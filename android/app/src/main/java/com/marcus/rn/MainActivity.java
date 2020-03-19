@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
 
         findViewById(R.id.btn_sync).setOnClickListener(v -> {
             MainApplication.isSyncLoadMode = true;
-            TimeRecordUtil.setStartTime(Constants.TAG_REACT_CONTENT_LOAD);
+            TimeRecordUtil.setStartTime(Constants.TAG_VIEW_ACTION);
             Intent intent = new Intent(this, SyncLoadContainerReactActivity.class);
             startActivity(intent);
         });

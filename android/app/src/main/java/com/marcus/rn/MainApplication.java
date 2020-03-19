@@ -9,10 +9,7 @@ import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
-import com.facebook.react.bridge.ReactMarker;
-import com.facebook.react.bridge.ReactMarkerConstants;
 import com.facebook.soloader.SoLoader;
-import com.marcus.rn.utils.TimeRecordUtil;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -21,8 +18,10 @@ public class MainApplication extends Application implements ReactApplication {
 
     public static volatile boolean isSyncLoadMode = true;
 
-    private final ReactNativeHost mReactNativeHostForSyncLoad =
-            new ReactNativeHost(this) {
+    @Override
+    public ReactNativeHost getReactNativeHost() {
+        if (isSyncLoadMode) {
+            return new ReactNativeHost(this) {
                 @Override
                 public boolean getUseDeveloperSupport() {
                     return false;
@@ -42,9 +41,8 @@ public class MainApplication extends Application implements ReactApplication {
                     return "index.android.bundle";
                 }
             };
-
-    private final ReactNativeHost mReactNativeHostForAsyncLoad =
-            new ReactNativeHost(this) {
+        } else {
+            return new ReactNativeHost(this) {
                 @Override
                 public boolean getUseDeveloperSupport() {
                     return false;
@@ -65,13 +63,6 @@ public class MainApplication extends Application implements ReactApplication {
                     return "common.android.bundle";
                 }
             };
-
-    @Override
-    public ReactNativeHost getReactNativeHost() {
-        if (isSyncLoadMode) {
-            return mReactNativeHostForSyncLoad;
-        } else {
-            return mReactNativeHostForAsyncLoad;
         }
     }
 
@@ -80,17 +71,6 @@ public class MainApplication extends Application implements ReactApplication {
         super.onCreate();
         SoLoader.init(this, /* native exopackage */ false);
         initializeFlipper(this); // Remove this line if you don't want Flipper enabled
-        // Add React Native Event Listener
-        TimeRecordUtil.setStartTime("RNLoad");
-        ReactMarker.addListener(new ReactMarker.MarkerListener() {
-            @Override
-            public void logMarker(ReactMarkerConstants name, @Nullable String tag, int instanceKey) {
-                if (name == ReactMarkerConstants.CONTENT_APPEARED) {
-                    TimeRecordUtil.setEndTime("RNLoad");
-                    TimeRecordUtil.printTimeInfo("RNLoad");
-                }
-            }
-        });
     }
 
     /**

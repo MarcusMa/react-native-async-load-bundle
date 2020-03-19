@@ -5,6 +5,10 @@ import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+
+import com.facebook.react.bridge.ReactMarker;
+import com.facebook.react.bridge.ReactMarkerConstants;
 import com.marcus.rn.Constants;
 import com.marcus.rn.utils.TimeRecordUtil;
 
@@ -18,7 +22,6 @@ public class AsyncLoadContainerReactActivity extends AsyncLoadReactActivity {
      */
     @Override
     protected String getMainComponentName() {
-        // return "simple";
         return Constants.MAIN_COMPONENT_NAME;
     }
 

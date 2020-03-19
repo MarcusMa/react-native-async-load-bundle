@@ -19,7 +19,6 @@ import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactRootView;
 import com.facebook.react.bridge.Callback;
-import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactMarker;
 import com.facebook.react.bridge.ReactMarkerConstants;
 import com.facebook.react.modules.core.PermissionListener;
@@ -29,9 +28,6 @@ import com.marcus.rn.utils.TimeRecordUtil;
 import java.lang.ref.WeakReference;
 
 public class AsyncLoadActivityDelegate {
-
-    private @Nullable
-    WeakReference<Activity> mGuideActivityRef;
 
     private @Nullable
     WeakReference<AsyncLoadReactActivity> mContainerActivityRef;
@@ -46,18 +42,12 @@ public class AsyncLoadActivityDelegate {
 
     private volatile boolean isCommonBundleLoadFinished = false;
 
-    AsyncLoadActivityDelegate(Activity activity) {
-        mGuideActivityRef = new WeakReference<>(activity);
-        ReactMarker.addListener((name, tag, instanceKey) -> {
-            // Log.d(Constants.TAG_LOG, "name: " + name.name() + " , tag: " + tag + ", instanceKey=" + instanceKey);
-            if (name == ReactMarkerConstants.NATIVE_MODULE_INITIALIZE_END) {
-                isCommonBundleLoadFinished = true;
-            }
-            if (name == ReactMarkerConstants.CONTENT_APPEARED) {
-                TimeRecordUtil.setEndTime(Constants.TAG_REACT_CONTENT_LOAD);
-                TimeRecordUtil.printTimeInfo(Constants.TAG_REACT_CONTENT_LOAD);
-            }
-        });
+    private ReactNativeHost mReactNativeHost;
+
+    public boolean isAvailable = true;
+
+    AsyncLoadActivityDelegate(ReactNativeHost host) {
+        mReactNativeHost = host;
     }
 
     protected @Nullable
@@ -77,19 +67,21 @@ public class AsyncLoadActivityDelegate {
      * {@code ReactNativeHost}, e.g. as a static field somewhere.
      */
     protected ReactNativeHost getReactNativeHost() {
-        return ((ReactApplication) getPlainActivity().getApplication()).getReactNativeHost();
+        return mReactNativeHost;
     }
 
     public ReactInstanceManager getReactInstanceManager() {
         return mReactDelegate.getReactInstanceManager();
     }
 
-    protected void onCreateInGuideActivity(Bundle savedInstanceState) {
+    protected void createReactContextInBackground() {
         final ReactInstanceManager manager = getReactNativeHost().getReactInstanceManager();
+        manager.addReactInstanceEventListener(context -> isCommonBundleLoadFinished = true);
         getReactNativeHost().getReactInstanceManager().createReactContextInBackground();
     }
 
-    protected void onCreateInContainerReactActivity(AsyncLoadReactActivity activity, Bundle savedInstanceState) {
+    protected void onCreate(AsyncLoadReactActivity activity, Bundle savedInstanceState) {
+        isAvailable = false;
         mContainerActivityRef = new WeakReference<>(activity);
         mReactDelegate =
                 new ReactDelegate(
@@ -108,6 +100,7 @@ public class AsyncLoadActivityDelegate {
     private Handler uiThreadHandler = new Handler(Looper.myLooper());
 
     private void checkAndLoadDiffBundle() {
+        Log.d(Constants.TAG_LOG, "checkAndLoadDiffBundle: " + isCommonBundleLoadFinished);
         if (isCommonBundleLoadFinished) {
             getReactInstanceManager().getCurrentReactContext().getCatalystInstance()
                     .loadScriptFromAssets(
@@ -211,10 +204,6 @@ public class AsyncLoadActivityDelegate {
     }
 
     protected Activity getPlainActivity() {
-        if (null == getContext()) {
-            return mGuideActivityRef.get();
-        } else {
-            return ((Activity) getContext());
-        }
+         return ((Activity) getContext());
     }
 }
