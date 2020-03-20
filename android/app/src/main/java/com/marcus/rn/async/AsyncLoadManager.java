@@ -1,8 +1,10 @@
 package com.marcus.rn.async;
 
 import android.app.Activity;
+import android.util.Log;
 
 import com.facebook.react.ReactApplication;
+import com.marcus.rn.Constants;
 
 public class AsyncLoadManager implements IAsyncLoadManager {
 
@@ -28,9 +30,10 @@ public class AsyncLoadManager implements IAsyncLoadManager {
 
     @Override
     public void prepareReactNativeEnv(Activity activity) {
-        if(null == mDelegate || !mDelegate.isAvailable){
+        if (null == mDelegate || !mDelegate.isAvailable) {
+            Log.d(Constants.TAG_LOG, "prepareReactNativeEnv create new mDelegate");
             mDelegate = new AsyncLoadActivityDelegate(((ReactApplication) activity.getApplication()).getReactNativeHost());
-            mDelegate.createReactContextInBackground();
+            mDelegate.initReactContextInBackground(activity);
         }
     }
 

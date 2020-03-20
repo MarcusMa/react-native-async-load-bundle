@@ -76,8 +76,8 @@ public abstract class AsyncLoadReactActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         ReactMarker.removeListener(markerListener);
-        super.onDestroy();
         mDelegate.onDestroy();
+        super.onDestroy();
     }
 
     @Override

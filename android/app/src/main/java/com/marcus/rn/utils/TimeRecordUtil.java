@@ -54,7 +54,7 @@ public class TimeRecordUtil {
         if (recordMap.containsKey(tag)) {
             Pair<Long, Long> timeRecord = recordMap.get(tag);
             Log.d(TAG, "----------------------------------");
-            Log.d(TAG, "| Tag : " + tag );
+            Log.d(TAG, "| Tag : " + tag);
             Log.d(TAG, "| Start Time (ms): " + timeRecord.first);
             Log.d(TAG, "| End Time (ms): " + timeRecord.second);
             Log.d(TAG, "| Time cost (ms): " + getTimeCost(tag));

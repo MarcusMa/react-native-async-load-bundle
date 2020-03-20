@@ -5,10 +5,6 @@ import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
-
-import com.facebook.react.bridge.ReactMarker;
-import com.facebook.react.bridge.ReactMarkerConstants;
 import com.marcus.rn.Constants;
 import com.marcus.rn.utils.TimeRecordUtil;
 

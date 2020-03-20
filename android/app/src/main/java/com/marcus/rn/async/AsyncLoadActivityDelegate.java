@@ -19,11 +19,9 @@ import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactRootView;
 import com.facebook.react.bridge.Callback;
-import com.facebook.react.bridge.ReactMarker;
-import com.facebook.react.bridge.ReactMarkerConstants;
+import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.modules.core.PermissionListener;
 import com.marcus.rn.Constants;
-import com.marcus.rn.utils.TimeRecordUtil;
 
 import java.lang.ref.WeakReference;
 
@@ -45,6 +43,13 @@ public class AsyncLoadActivityDelegate {
     private ReactNativeHost mReactNativeHost;
 
     public boolean isAvailable = true;
+
+    private ReactInstanceManager.ReactInstanceEventListener mReactInstanceEventListener = new ReactInstanceManager.ReactInstanceEventListener() {
+        @Override
+        public void onReactContextInitialized(ReactContext context) {
+            isCommonBundleLoadFinished = true;
+        }
+    };
 
     AsyncLoadActivityDelegate(ReactNativeHost host) {
         mReactNativeHost = host;
@@ -74,10 +79,11 @@ public class AsyncLoadActivityDelegate {
         return mReactDelegate.getReactInstanceManager();
     }
 
-    protected void createReactContextInBackground() {
+
+    protected void initReactContextInBackground(Activity activity) {
         final ReactInstanceManager manager = getReactNativeHost().getReactInstanceManager();
-        manager.addReactInstanceEventListener(context -> isCommonBundleLoadFinished = true);
-        getReactNativeHost().getReactInstanceManager().createReactContextInBackground();
+        manager.addReactInstanceEventListener(mReactInstanceEventListener);
+        manager.createReactContextInBackground();
     }
 
     protected void onCreate(AsyncLoadReactActivity activity, Bundle savedInstanceState) {
@@ -131,6 +137,9 @@ public class AsyncLoadActivityDelegate {
     }
 
     protected void onDestroy() {
+        ReactInstanceManager manager = getReactNativeHost().getReactInstanceManager();
+        manager.addReactInstanceEventListener(mReactInstanceEventListener);
+        uiThreadHandler.removeCallbacksAndMessages(null);
         mReactDelegate.onHostDestroy();
     }
 
@@ -204,6 +213,6 @@ public class AsyncLoadActivityDelegate {
     }
 
     protected Activity getPlainActivity() {
-         return ((Activity) getContext());
+        return ((Activity) getContext());
     }
 }

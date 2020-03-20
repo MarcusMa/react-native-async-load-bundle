@@ -5,8 +5,6 @@ import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
-
 import com.facebook.react.ReactActivity;
 import com.facebook.react.bridge.ReactMarker;
 import com.facebook.react.bridge.ReactMarkerConstants;
@@ -17,15 +15,12 @@ public abstract class BaseContainerReactActivity extends ReactActivity {
 
     private Handler mHandler = new Handler();
 
-    private ReactMarker.MarkerListener markerListener = new ReactMarker.MarkerListener() {
-        @Override
-        public void logMarker(ReactMarkerConstants name, @Nullable String tag, int instanceKey) {
-            if (name == ReactMarkerConstants.CONTENT_APPEARED) {
-                TimeRecordUtil.setEndTime(Constants.TAG_VIEW_ACTION);
-                TimeRecordUtil.setEndTime(Constants.TAG_REACT_CONTENT_LOAD);
-                TimeRecordUtil.printTimeInfo(Constants.TAG_VIEW_ACTION);
-                TimeRecordUtil.printTimeInfo(Constants.TAG_REACT_CONTENT_LOAD);
-            }
+    private ReactMarker.MarkerListener markerListener = (name, tag, instanceKey) -> {
+        if (name == ReactMarkerConstants.CONTENT_APPEARED) {
+            TimeRecordUtil.setEndTime(Constants.TAG_VIEW_ACTION);
+            TimeRecordUtil.setEndTime(Constants.TAG_REACT_CONTENT_LOAD);
+            TimeRecordUtil.printTimeInfo(Constants.TAG_VIEW_ACTION);
+            TimeRecordUtil.printTimeInfo(Constants.TAG_REACT_CONTENT_LOAD);
         }
     };
 

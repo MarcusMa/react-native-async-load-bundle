@@ -31,7 +31,8 @@
   CGRect screenRect = [[UIScreen mainScreen] bounds];
   
   UILabel *labelTips = [[UILabel alloc] init];
-  labelTips.text = @"There are two ways to start an activity with react naitve in the demo: one as SYNC, the other as ASYNC. It is same with the offical reference implementation when using SYNC. As for ASYNC, it will start a general activity, which will load a common bundle file, after that it will start a custom activity, which will only load the differential bundle file. The load time of react view will display by log and toast.";
+  labelTips.text = @"This activity loads a common bundle file in the backgroud, it is used to simulate a PARENT activity of the activity using react native. This activity can usually be dislayed the entrance of your business which was builded by react native in your official app. You can start the activity using react native by clicking the button blew.";
+  
   labelTips.font = [UIFont systemFontOfSize:18];
   labelTips.lineBreakMode = NSLineBreakByWordWrapping;
   labelTips.numberOfLines = 0;
