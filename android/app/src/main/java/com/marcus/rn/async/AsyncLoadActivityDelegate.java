@@ -80,7 +80,7 @@ public class AsyncLoadActivityDelegate {
     }
 
 
-    protected void initReactContextInBackground(Activity activity) {
+    protected void initReactContextInBackground() {
         final ReactInstanceManager manager = getReactNativeHost().getReactInstanceManager();
         manager.addReactInstanceEventListener(mReactInstanceEventListener);
         manager.createReactContextInBackground();

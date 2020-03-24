@@ -8,7 +8,7 @@ const fs = require("fs");
 const crypto = require("crypto");
 const defaultCreateModuleIdFactory = require("./node_modules/metro/src/lib/createModuleIdFactory");
 
-const BUILD_TYPE_COMMOM = "common";
+const BUILD_TYPE_COMMON = "common";
 const BUILD_TYPE_DEFAULT = "default";
 const BUILD_TYPE_DIFF = "diff";
 
@@ -100,7 +100,7 @@ buildProcessModuleFilter = function(buildConfig) {
     if (buildConfig.type == BUILD_TYPE_DIFF) {
       let findKey = getFindKey(path);
       let storeObj = moduleIdsJsonObj[findKey];
-      if (storeObj != null && storeObj.type == BUILD_TYPE_COMMOM) {
+      if (storeObj != null && storeObj.type == BUILD_TYPE_COMMON) {
         return false;
       }
       return true;
@@ -111,7 +111,7 @@ buildProcessModuleFilter = function(buildConfig) {
 
 module.exports = {
   BuildType: {
-    COMMON: BUILD_TYPE_COMMOM,
+    COMMON: BUILD_TYPE_COMMON,
     DEFAULT: BUILD_TYPE_DEFAULT,
     DIFF: BUILD_TYPE_DIFF
   },

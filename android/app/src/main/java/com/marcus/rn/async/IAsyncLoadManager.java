@@ -4,8 +4,6 @@ import android.app.Activity;
 
 public interface IAsyncLoadManager {
 
-    void prepareReactNativeEnv();
-
     void prepareReactNativeEnv(Activity activity);
 
     AsyncLoadActivityDelegate getAvailableDelegate();

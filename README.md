@@ -13,7 +13,7 @@ This is an example project to build the common bundle file and the differential 
 
 ## 📋 Background
 
-As we all known that there are three parts in a official bundle file: **Polyfill**、 **Modules**、 **Require**. If you build two different official bundle files, you will find that there are many repeated content, which is close to 500K. In order to minimize the bundle file, we define a **common bundle file**, which only includes some basic modules(such as `react` and `react-native`). And we define a **differential bundle file**, which only includes your custom code.
+As we all known that there are three parts in a official bundle file: **Polyfill**、 **Modules**、 **Requires**. If you build two different official bundle files, you will find that there are many repeated content, which is close to 500K. In order to minimize the bundle file, we define a **common bundle file**, which only includes some basic modules(such as `react` and `react-native`). And we define a **differential bundle file**, which only includes your custom code.
 
 Before React Native 0.55, we generally use `google-diff-match-patch` or `BSDiff` to build the differential bundle file, which needs the process of merging before your app loading the differential bundle file.
 
@@ -92,7 +92,7 @@ npm run copy_files_to_projects
 
 ### 1. Build a differential bundle file using Metro.
 
-The key to build a differential bundle file is making the id of input module invariant during the process of bundling. It is noteworthy that the Metro provides two configuration items in `metro.config.js` file: `createModuleIdFactory(path)` and `processModuleFilter(module)`.
+The key to build a differential bundle file is making the id of input module **invariant** during the process of bundling. It is noteworthy that the Metro provides two configuration items in `metro.config.js` file: `createModuleIdFactory(path)` and `processModuleFilter(module)`.
 
 By customizing `createModuleIdFactory(path)`, we used the **hash** of the file as the key to allocate module id.
 
@@ -125,10 +125,14 @@ By customizing `processModuleFilter(module)`, we compare the hash of input `modu
 // ...
 buildProcessModuleFilter = function(buildConfig) {
   return moduleObj => {
+    let path = moduleObj.path;
+    if (!fs.existsSync(path)) {
+      return true;
+    }
     if (buildConfig.type == BUILD_TYPE_DIFF) {
-      let findKey = getFindKey(moduleObj.path);
+      let findKey = getFindKey(path);
       let storeObj = moduleIdsJsonObj[findKey];
-      if (storeObj != null && storeObj.type == BUILD_TYPE_COMMOM) {
+      if (storeObj != null && storeObj.type == BUILD_TYPE_COMMON) {
         return false;
       }
       return true;
@@ -139,7 +143,7 @@ buildProcessModuleFilter = function(buildConfig) {
 // ...
 ```
 
-However, the polyfills is also written in the output bundle file after running metro. We should remove those code by ourselves.
+However, the polyfills is also written in the output bundle file after running Metro, we should remove those code by ourselves.
 
 For example, we made a script file call `removePolyfill.js` in the dir `__async_load_shell__`, you can use it by run:
 
@@ -151,15 +155,16 @@ node ./__async_load_shell__/removePolyfill.js  {your_different_bundle_file_path}
 
 Because the common bundle file includes all basic codes, we should make sure a good timing to load the common bundle file before loading the differential bundle file.
 
-In the demo app, we build a guide activity to load the common bundle file, this activity is also used to simulate a **PARENT** activity of the activity using react native. This guide activity can also usually be displayed the entrance of your business which was builded by react native in your official app.
+In the demo app, a guide activity is created to load the common bundle file, which is also used to simulate a **PARENT** activity of the activity using react native. Sometimes, The guide activity can also usually be displayed the entrance of your business which was builded by react native in your official app.
 
 All related code was organized in package `com.marcus.rn.async`. There are some key points about the implementation:
 
 1. We use the `ReactNativeHost` to point the path of common bundle file, and call `createReactContextInBackground()` to initialize the context of React Native and load the common bundle file.
-2. In order to get approximate finish time of loading common bundle file, we use `ReactMarker.addListener()` to add custom listener and monitor the event called `NATIVE_MODULE_INITIALIZE_END` to indicate the finish of loading common bundle file.
+2. In order to get approximate finish time of loading common bundle file, we use `addReactInstanceEventListener()` of `ReactInstanceManager` to add custom listener and monitor the event  `onReactContextInitialized` to indicate the finish of loading common bundle file.
 3. We redefine `ReactActivityDelegate` class to suit the scene of loading asynchronously. which can be found by name with `AsyncLoadActivityDelegate.java`.
-4. Because the guide activity and the container activity of react native **MUST** shared the same `AsyncLoadActivityDelegate` object, we build a **singleton** class called `AsyncLoadActivityDelegateProvider` to provider the object.
-5. The **load time of react view** will be displayed by log and toast, which records time period from clicking entry button to monitor the event called `CONTENT_APPEARED`.
+4. Because the guide activity and the container activity of react native **MUST** shared the same `AsyncLoadActivityDelegate` object, we build a **singleton** class called `AsyncLoadManager` to provider the object.
+5. The **load time of react view** will be displayed by log and toast, which records time period from `onCreate()` of the activity to monitor the event called `CONTENT_APPEARED`.
+6. As for the global variable problem in javascript, we should clear the context of react native before reused it. we provides a simple way to fix the problem by rebuild the `AsyncLoadActivityDelegate` object, you can see the code in `prepareReactNativeEnv()` in `AsyncLoadManager`.
 
 ### 3. Load the differential bundle file asynchronously in iOS.
 

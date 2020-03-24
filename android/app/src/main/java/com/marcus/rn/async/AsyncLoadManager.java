@@ -24,16 +24,11 @@ public class AsyncLoadManager implements IAsyncLoadManager {
     }
 
     @Override
-    public void prepareReactNativeEnv() {
-
-    }
-
-    @Override
     public void prepareReactNativeEnv(Activity activity) {
         if (null == mDelegate || !mDelegate.isAvailable) {
             Log.d(Constants.TAG_LOG, "prepareReactNativeEnv create new mDelegate");
             mDelegate = new AsyncLoadActivityDelegate(((ReactApplication) activity.getApplication()).getReactNativeHost());
-            mDelegate.initReactContextInBackground(activity);
+            mDelegate.initReactContextInBackground();
         }
     }
 
