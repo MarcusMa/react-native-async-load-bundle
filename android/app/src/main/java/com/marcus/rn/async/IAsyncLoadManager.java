@@ -7,4 +7,5 @@ public interface IAsyncLoadManager {
     void prepareReactNativeEnv(Activity activity);
 
     AsyncLoadActivityDelegate getAvailableDelegate();
+
 }

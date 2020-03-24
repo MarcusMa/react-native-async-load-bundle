@@ -2,8 +2,8 @@ package com.marcus.rn;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.marcus.rn.async.AsyncLoadGuideActivity;
 import com.marcus.rn.sync.SyncLoadContainerReactActivity;

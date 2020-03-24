@@ -11,19 +11,21 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.KeyEvent;
 
-import androidx.annotation.Nullable;
-
+import com.facebook.infer.annotation.Assertions;
 import com.facebook.react.ReactApplication;
-import com.facebook.react.ReactDelegate;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactRootView;
 import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReactContext;
+import com.facebook.react.devsupport.DoubleTapReloadRecognizer;
+import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler;
 import com.facebook.react.modules.core.PermissionListener;
 import com.marcus.rn.Constants;
 
 import java.lang.ref.WeakReference;
+
+import javax.annotation.Nullable;
 
 public class AsyncLoadActivityDelegate {
 
@@ -31,12 +33,13 @@ public class AsyncLoadActivityDelegate {
     WeakReference<AsyncLoadReactActivity> mContainerActivityRef;
 
     private @Nullable
+    ReactRootView mReactRootView;
+    private @Nullable
+    DoubleTapReloadRecognizer mDoubleTapReloadRecognizer;
+    private @Nullable
     PermissionListener mPermissionListener;
-
     private @Nullable
     Callback mPermissionsCallback;
-
-    private ReactDelegate mReactDelegate;
 
     private volatile boolean isCommonBundleLoadFinished = false;
 
@@ -51,7 +54,7 @@ public class AsyncLoadActivityDelegate {
         }
     };
 
-    AsyncLoadActivityDelegate(ReactNativeHost host) {
+    public AsyncLoadActivityDelegate(ReactNativeHost host) {
         mReactNativeHost = host;
     }
 
@@ -65,41 +68,30 @@ public class AsyncLoadActivityDelegate {
     }
 
     /**
-     * Get the {@link ReactNativeHost} used by this app. By default, assumes {@link
-     * Activity#getApplication()} is an instance of {@link ReactApplication} and calls {@link
-     * ReactApplication#getReactNativeHost()}. Override this method if your application class does not
-     * implement {@code ReactApplication} or you simply have a different mechanism for storing a
-     * {@code ReactNativeHost}, e.g. as a static field somewhere.
+     * Get the {@link ReactNativeHost} used by this app. By default, assumes
+     * {@link Activity#getApplication()} is an instance of {@link ReactApplication} and calls
+     * {@link ReactApplication#getReactNativeHost()}. Override this method if your application class
+     * does not implement {@code ReactApplication} or you simply have a different mechanism for
+     * storing a {@code ReactNativeHost}, e.g. as a static field somewhere.
      */
     protected ReactNativeHost getReactNativeHost() {
         return mReactNativeHost;
     }
 
-    public ReactInstanceManager getReactInstanceManager() {
-        return mReactDelegate.getReactInstanceManager();
-    }
-
-
     protected void initReactContextInBackground() {
-        final ReactInstanceManager manager = getReactNativeHost().getReactInstanceManager();
+        final ReactInstanceManager manager = getReactInstanceManager();
         manager.addReactInstanceEventListener(mReactInstanceEventListener);
         manager.createReactContextInBackground();
+    }
+
+    public ReactInstanceManager getReactInstanceManager() {
+        return getReactNativeHost().getReactInstanceManager();
     }
 
     protected void onCreate(AsyncLoadReactActivity activity, Bundle savedInstanceState) {
         isAvailable = false;
         mContainerActivityRef = new WeakReference<>(activity);
-        mReactDelegate =
-                new ReactDelegate(
-                        activity,
-                        getReactNativeHost(),
-                        mContainerActivityRef.get().getMainComponentName(),
-                        getLaunchOptions()) {
-                    @Override
-                    protected ReactRootView createRootView() {
-                        return AsyncLoadActivityDelegate.this.createRootView();
-                    }
-                };
+        mDoubleTapReloadRecognizer = new DoubleTapReloadRecognizer();
         checkAndLoadDiffBundle();
     }
 
@@ -120,16 +112,30 @@ public class AsyncLoadActivityDelegate {
     }
 
     protected void loadApp(String appKey) {
-        mReactDelegate.loadApp(appKey);
-        getPlainActivity().setContentView(mReactDelegate.getReactRootView());
+        if (mReactRootView != null) {
+            throw new IllegalStateException("Cannot loadApp while app is already running.");
+        }
+        mReactRootView = createRootView();
+        mReactRootView.startReactApplication(
+                getReactNativeHost().getReactInstanceManager(),
+                appKey,
+                getLaunchOptions());
+        getPlainActivity().setContentView(mReactRootView);
     }
 
     protected void onPause() {
-        mReactDelegate.onHostPause();
+        if (getReactNativeHost().hasInstance()) {
+            getReactNativeHost().getReactInstanceManager().onHostPause(getPlainActivity());
+        }
     }
 
     protected void onResume() {
-        mReactDelegate.onHostResume();
+        if (getReactNativeHost().hasInstance()) {
+            getReactNativeHost().getReactInstanceManager().onHostResume(
+                    getPlainActivity(),
+                    (DefaultHardwareBackBtnHandler) getPlainActivity());
+        }
+
         if (mPermissionsCallback != null) {
             mPermissionsCallback.invoke();
             mPermissionsCallback = null;
@@ -137,14 +143,20 @@ public class AsyncLoadActivityDelegate {
     }
 
     protected void onDestroy() {
-        ReactInstanceManager manager = getReactNativeHost().getReactInstanceManager();
-        manager.addReactInstanceEventListener(mReactInstanceEventListener);
-        uiThreadHandler.removeCallbacksAndMessages(null);
-        mReactDelegate.onHostDestroy();
+        if (mReactRootView != null) {
+            mReactRootView.unmountReactApplication();
+            mReactRootView = null;
+        }
+        if (getReactNativeHost().hasInstance()) {
+            getReactNativeHost().getReactInstanceManager().onHostDestroy(getPlainActivity());
+        }
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        mReactDelegate.onActivityResult(requestCode, resultCode, data, true);
+        if (getReactNativeHost().hasInstance()) {
+            getReactNativeHost().getReactInstanceManager()
+                    .onActivityResult(getPlainActivity(), requestCode, resultCode, data);
+        }
     }
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -158,7 +170,19 @@ public class AsyncLoadActivityDelegate {
     }
 
     public boolean onKeyUp(int keyCode, KeyEvent event) {
-        return mReactDelegate.shouldShowDevMenuOrReload(keyCode, event);
+        if (getReactNativeHost().hasInstance() && getReactNativeHost().getUseDeveloperSupport()) {
+            if (keyCode == KeyEvent.KEYCODE_MENU) {
+                getReactNativeHost().getReactInstanceManager().showDevOptionsDialog();
+                return true;
+            }
+            boolean didDoubleTapR = Assertions.assertNotNull(mDoubleTapReloadRecognizer)
+                    .didDoubleTapR(keyCode, getPlainActivity().getCurrentFocus());
+            if (didDoubleTapR) {
+                getReactNativeHost().getReactInstanceManager().getDevSupportManager().handleReloadJS();
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean onKeyLongPress(int keyCode, KeyEvent event) {
@@ -172,7 +196,11 @@ public class AsyncLoadActivityDelegate {
     }
 
     public boolean onBackPressed() {
-        return mReactDelegate.onBackPressed();
+        if (getReactNativeHost().hasInstance()) {
+            getReactNativeHost().getReactInstanceManager().onBackPressed();
+            return true;
+        }
+        return false;
     }
 
     public boolean onNewIntent(Intent intent) {
@@ -183,29 +211,27 @@ public class AsyncLoadActivityDelegate {
         return false;
     }
 
-    public void onWindowFocusChanged(boolean hasFocus) {
-        if (getReactNativeHost().hasInstance()) {
-            getReactNativeHost().getReactInstanceManager().onWindowFocusChange(hasFocus);
-        }
-    }
-
     @TargetApi(Build.VERSION_CODES.M)
     public void requestPermissions(
-            String[] permissions, int requestCode, PermissionListener listener) {
+            String[] permissions,
+            int requestCode,
+            PermissionListener listener) {
         mPermissionListener = listener;
         getPlainActivity().requestPermissions(permissions, requestCode);
     }
 
     public void onRequestPermissionsResult(
-            final int requestCode, final String[] permissions, final int[] grantResults) {
-        mPermissionsCallback =
-                args -> {
-                    if (mPermissionListener != null
-                            && mPermissionListener.onRequestPermissionsResult(
-                            requestCode, permissions, grantResults)) {
-                        mPermissionListener = null;
-                    }
-                };
+            final int requestCode,
+            final String[] permissions,
+            final int[] grantResults) {
+        mPermissionsCallback = new Callback() {
+            @Override
+            public void invoke(Object... args) {
+                if (mPermissionListener != null && mPermissionListener.onRequestPermissionsResult(requestCode, permissions, grantResults)) {
+                    mPermissionListener = null;
+                }
+            }
+        };
     }
 
     protected Context getContext() {

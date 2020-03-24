@@ -3,9 +3,7 @@ package com.marcus.rn.async;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
-
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
+import android.support.v7.app.AppCompatActivity;
 
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
@@ -22,15 +20,12 @@ public abstract class AsyncLoadReactActivity extends AppCompatActivity
 
     private final AsyncLoadActivityDelegate mDelegate;
 
-    private ReactMarker.MarkerListener markerListener = new ReactMarker.MarkerListener() {
-        @Override
-        public void logMarker(ReactMarkerConstants name, @Nullable String tag, int instanceKey) {
-            if (name == ReactMarkerConstants.CONTENT_APPEARED) {
-                TimeRecordUtil.setEndTime(Constants.TAG_VIEW_ACTION);
-                TimeRecordUtil.setEndTime(Constants.TAG_REACT_CONTENT_LOAD);
-                TimeRecordUtil.printTimeInfo(Constants.TAG_VIEW_ACTION);
-                TimeRecordUtil.printTimeInfo(Constants.TAG_REACT_CONTENT_LOAD);
-            }
+    private ReactMarker.MarkerListener markerListener = (name, tag, instanceKey) -> {
+        if (name == ReactMarkerConstants.CONTENT_APPEARED) {
+            TimeRecordUtil.setEndTime(Constants.TAG_VIEW_ACTION);
+            TimeRecordUtil.setEndTime(Constants.TAG_REACT_CONTENT_LOAD);
+            TimeRecordUtil.printTimeInfo(Constants.TAG_VIEW_ACTION);
+            TimeRecordUtil.printTimeInfo(Constants.TAG_REACT_CONTENT_LOAD);
         }
     };
 
@@ -76,8 +71,8 @@ public abstract class AsyncLoadReactActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         ReactMarker.removeListener(markerListener);
-        mDelegate.onDestroy();
         super.onDestroy();
+        mDelegate.onDestroy();
     }
 
     @Override
@@ -129,12 +124,6 @@ public abstract class AsyncLoadReactActivity extends AppCompatActivity
     public void onRequestPermissionsResult(
             int requestCode, String[] permissions, int[] grantResults) {
         mDelegate.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
-
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        mDelegate.onWindowFocusChanged(hasFocus);
     }
 
     protected final ReactNativeHost getReactNativeHost() {

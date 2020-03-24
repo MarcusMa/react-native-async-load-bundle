@@ -2,8 +2,7 @@ package com.marcus.rn.async;
 
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.appcompat.app.AppCompatActivity;
+import android.support.v7.app.AppCompatActivity;
 
 import com.marcus.rn.Constants;
 import com.marcus.rn.R;
