@@ -1,6 +1,8 @@
 # React Native Async Load Bundle
 
-This is an example project to build the common bundle file and the differential bundle file using Metro, and load the differential bundle asynchronously in app. Compare with loading the official bundle file synchronously, there was **30% ~ 50%**(200 ~ 400 ms) decrease in the load time of react view by using loading the differential bundle asynchronously.
+This is an example project to build the common bundle file and the differential bundle file using Metro, and load the differential bundle asynchronously in app. Compare with loading the official bundle file synchronously, there was **20% ~ 25%**(20 ~ 200 ms) decrease in the load time of react view by using loading the differential bundle asynchronously.
+
+[中文说明](https://www.jianshu.com/p/609261b39d0e)
 
 ## 📋 Contents
 
@@ -56,7 +58,7 @@ npm run copy_files_to_projects
 
 5. Run the app project by Android Studio or XCode.
 
-> NOTICE: There are two ways to start an activity with react native in android app: one as sync, the other as async. It is same with the official reference implementation when using sync. As for async, it will start a general activity, which will load a common bundle file, after that it will start a custom activity using react native, which will only load the differential bundle file. The load time of react view will display by log and toast. If you want to get the load time accurately, you should restart the app before clicking one of the bottom two buttons.
+> NOTICE: There are two ways to start an activity with react native in android app: one as SYNC, the other as ASYNC. It is same with the official reference implementation when using SYNC. As for ASYNC, it will start a general Activity (or ViewController), which will load a common bundle file, after that it will start a custom Activity (or ViewController) using react native, which will **ONLY** load the differential bundle file. The load time of react view will display by log and toast.
 
 ## 📋 Experimental data
 
@@ -84,9 +86,9 @@ npm run copy_files_to_projects
 
 | Loading Type     |   Redmi 3   | Huawei P20  |  iPhone 6s  | iPhone XS MAX |
 | ---------------- | :---------: | :---------: | :---------: | :-----------: |
-| Synchronization  |  1628.0 ms  |  738.8 ms   |  961.3 ms   |   472.2 ms    |
-| Asynchronization |  1148.2 ms  |  514.8 ms   |  564.2 ms   |   196.3 ms    |
-|                  | **-29.50%** | **-30.30%** | **-41.60%** |  **-58.43%**  |
+| Synchronization  |  868.2 ms   |  337.8 ms   |  405.3 ms   |   109.2 ms    |
+| Asynchronization |  643.4 ms   |  253.2 ms   |  300.2 ms   |    88.3 ms    |
+|                  | **-25.89%** | **-25.04%** | **-25.88%** |  **-18.68%**  |
 
 ## 📋 How it works
 
@@ -160,13 +162,36 @@ In the demo app, a guide activity is created to load the common bundle file, whi
 All related code was organized in package `com.marcus.rn.async`. There are some key points about the implementation:
 
 1. We use the `ReactNativeHost` to point the path of common bundle file, and call `createReactContextInBackground()` to initialize the context of React Native and load the common bundle file.
-2. In order to get approximate finish time of loading common bundle file, we use `addReactInstanceEventListener()` of `ReactInstanceManager` to add custom listener and monitor the event  `onReactContextInitialized` to indicate the finish of loading common bundle file.
+2. In order to get approximate finish time of loading common bundle file, we use `addReactInstanceEventListener()` of `ReactInstanceManager` to add custom listener and monitor the event `onReactContextInitialized` to indicate the finish of loading common bundle file.
 3. We redefine `ReactActivityDelegate` class to suit the scene of loading asynchronously. which can be found by name with `AsyncLoadActivityDelegate.java`.
 4. Because the guide activity and the container activity of react native **MUST** shared the same `AsyncLoadActivityDelegate` object, we build a **singleton** class called `AsyncLoadManager` to provider the object.
 5. The **load time of react view** will be displayed by log and toast, which records time period from `onCreate()` of the activity to monitor the event called `CONTENT_APPEARED`.
 6. As for the global variable problem in javascript, we should clear the context of react native before reused it. we provides a simple way to fix the problem by rebuild the `AsyncLoadActivityDelegate` object, you can see the code in `prepareReactNativeEnv()` in `AsyncLoadManager`.
 
 ### 3. Load the differential bundle file asynchronously in iOS.
+
+Because the common bundle file includes all basic codes, we should make sure a good timing to load the common bundle file before loading the differential bundle file.
+
+In the demo app, a guide view-controller is created to load the common bundle file, which is also used to simulate a **PARENT** view-controller of the view-controller using react native. Sometimes, The guide view-controller can also usually be displayed the entrance of your business which was builded by react native in your official app.
+
+There are some key points about the implementation:
+
+1. We expose the `executeSourceCode` expose in `RCTBridge` like this:
+
+```object-c
+#import <Foundation/Foundation.h>
+
+@interface RCTBridge (RnLoadJS)
+
+ - (void)executeSourceCode:(NSData *)sourceCode sync:(BOOL)sync;
+
+@end
+```
+
+2. We use the `sourceURLForBridge` of `RCTBridgeDelegate` to point the path of common bundle file, and call `[[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions]` to initialize the context of React Native and load the common bundle file.
+3. Because the guide view-controller and the container view-controller of react native **MUST** shared the same `RCTBridge` object, we build a **singleton** class called `MMAsyncLoadManager` to manage the object.
+4. The **load time of react view** will be displayed by log and toast, which records time period from `viewDidLoad` of the view-controller to monitor the notification called `RCTContentDidAppearNotification`.
+5. As for the global variable problem in javascript, we should clear the context of react native before reused it. we provides a simple way to fix the problem by rebuild the `RCTBridge` object, you can see the code in `prepareReactNativeEnv` method in `MMAsyncLoadManager`.
 
 ## 📋 Contributing
 
