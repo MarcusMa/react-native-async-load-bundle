@@ -21,6 +21,8 @@ Before React Native 0.55, we generally use `google-diff-match-patch` or `BSDiff`
 
 However, there is a new way to build the differential bundle file by using Metro.
 
+![ScreenShot](./doc/screen2.gif)
+
 ## 📋 Usage
 
 1. Modify the `common.js` like blew:
