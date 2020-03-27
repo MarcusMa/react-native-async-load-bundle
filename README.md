@@ -176,7 +176,7 @@ In the demo app, a guide view-controller is created to load the common bundle fi
 
 There are some key points about the implementation:
 
-1. We expose the `executeSourceCode` expose in `RCTBridge` like this:
+1. We expose the `executeSourceCode` in `RCTBridge` like this:
 
 ```object-c
 #import <Foundation/Foundation.h>
